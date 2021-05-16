@@ -1,0 +1,216 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/Beebits.sol": {
+      "lastModificationDate": 1621093406200,
+      "contentHash": "1956503d3a0c6e9e07992257a9bb66d4",
+      "sourceName": "contracts/Beebits.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IERC721.sol",
+        "./libraries/SafeMath.sol",
+        "./interfaces/IBinanceBunksMarket.sol",
+        "./interfaces/IERC721TokenReceiver.sol"
+      ],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "Beebits"
+      ]
+    },
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/interfaces/IERC721.sol": {
+      "lastModificationDate": 1621078962360,
+      "contentHash": "d27db95e726387296cc817213c3db208",
+      "sourceName": "contracts/interfaces/IERC721.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
+    },
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/libraries/SafeMath.sol": {
+      "lastModificationDate": 1621079014229,
+      "contentHash": "f4ff9f760b1315f9e42ceef2fd222d11",
+      "sourceName": "contracts/libraries/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/interfaces/IERC721TokenReceiver.sol": {
+      "lastModificationDate": 1621079101603,
+      "contentHash": "25da80e7ea92ece7f67a2fbd1f25f803",
+      "sourceName": "contracts/interfaces/IERC721TokenReceiver.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "IERC721TokenReceiver"
+      ]
+    },
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/interfaces/IERC165.sol": {
+      "lastModificationDate": 1621078945883,
+      "contentHash": "3bdc4673a922d779966c7f67f0b02234",
+      "sourceName": "contracts/interfaces/IERC165.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "/Users/sundeepcharanramkumar/Desktop/Blockchain_projects/beebits-core/contracts/interfaces/IBinanceBunksMarket.sol": {
+      "lastModificationDate": 1621089360824,
+      "contentHash": "040313c5d450b8437a74d8bb1cee4201",
+      "sourceName": "contracts/interfaces/IBinanceBunksMarket.sol",
+      "solcConfig": {
+        "version": "0.7.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.6"
+      ],
+      "artifacts": [
+        "IBinanceBunksMarket"
+      ]
+    }
+  }
+}
