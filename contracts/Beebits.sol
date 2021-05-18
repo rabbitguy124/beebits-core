@@ -10,7 +10,7 @@ contract Beebits is IERC721 {
   using SafeMath for uint256;
 
   /**
-   * Event emitted when minting a new NFT. "createdVia" is the index of the Cryptobunk/Autoglyph that was used to mint, or 0 if not applicable.
+   * Event emitted when minting a new NFT. "createdVia" is the index of the Cryptobunk that was used to mint, or 0 if not applicable.
    */
   event Mint(uint256 indexed index, address indexed minter, uint256 createdVia);
 
@@ -53,6 +53,40 @@ contract Beebits is IERC721 {
   event CommunityGrantEnds();
 
   /**
+   * Event emitted when a listing is created
+   */
+  event BeebitListed(
+    uint256 tokenId,
+    uint256 askingPrice,
+    address buyerAddress
+  );
+
+  /**
+   * Event emitted when a listing is withdrawn
+   */
+  event BeebitDelisted(uint256 tokenId);
+
+  /**
+   * Event emitted when someone bought a beebit
+   */
+  event BeebitBought(
+    uint256 tokenId,
+    uint256 price,
+    address seller,
+    address buyer
+  );
+
+  /**
+   * Event emitted when a bid is placed for a listing
+   */
+  event BeebitBidPlaced(uint256 tokenId, uint256 bidValue, address bidder);
+
+  /**
+   * Event emitted when a bid is withdrawn for a listing
+   */
+  event BeebitBidWithdrawn(uint256 tokenId, uint256 bidValue, address bidder);
+
+  /**
    * @dev Magic value of a smart contract that can recieve NFT.
    * Equal to: bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")).
    */
@@ -62,7 +96,7 @@ contract Beebits is IERC721 {
   string public contentHash = "QmfXYgfX1qNfzQ6NRyFnupniZusasFPMeiWn5aaDnx7YXo";
 
   uint256 public constant TOKEN_LIMIT = 20000;
-  uint256 public constant SALE_LIMIT = 9000;
+  uint256 public SALE_LIMIT = 10000;
 
   mapping(bytes4 => bool) internal supportedInterfaces;
 
@@ -105,12 +139,29 @@ contract Beebits is IERC721 {
   mapping(address => uint256) public ethBalance;
   mapping(bytes32 => bool) public cancelledOffers;
 
+  //// Listing and Bids
+  mapping(uint256 => Listing) public beebitsListings;
+  mapping(address => uint256) public bnbBalance;
+  mapping(uint256 => Bid) public beebitsBids;
+  mapping(bytes32 => bool) public cancelledListings;
+
   modifier onlyDeployer() {
     require(msg.sender == deployer, "Only deployer.");
     _;
   }
 
   bool private reentrancyLock = false;
+
+  /* Basic checks for token id */
+  modifier isTokenValid(uint256 _tokenId) {
+    require(!marketPaused, "Beebit: market is paused");
+    require(!contractSealed, "Beebit: contract is sealed");
+    require(
+      _tokenId <= TOKEN_LIMIT && _tokenId > 0,
+      "Beebits: invalid token id"
+    );
+    _;
+  }
 
   /* Prevent a contract function from being reentrant-called. */
   modifier reentrancyGuard {
@@ -145,14 +196,27 @@ contract Beebits is IERC721 {
     _;
   }
 
-  constructor(address _bunks, address payable _beneficiary) {
+  //   constructor(address _bunks, address payable _beneficiary) {
+  //     supportedInterfaces[0x01ffc9a7] = true; // ERC165
+  //     supportedInterfaces[0x80ac58cd] = true; // ERC721
+  //     supportedInterfaces[0x780e9d63] = true; // ERC721 Enumerable
+  //     supportedInterfaces[0x5b5e139f] = true; // ERC721 Metadata
+  //     deployer = msg.sender;
+  //     bunks = _bunks;
+  //     beneficiary = _beneficiary;
+  //   }
+  constructor() {
     supportedInterfaces[0x01ffc9a7] = true; // ERC165
     supportedInterfaces[0x80ac58cd] = true; // ERC721
     supportedInterfaces[0x780e9d63] = true; // ERC721 Enumerable
     supportedInterfaces[0x5b5e139f] = true; // ERC721 Metadata
     deployer = msg.sender;
-    bunks = _bunks;
-    beneficiary = _beneficiary;
+    bunks = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
+    beneficiary = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+  }
+
+  function changeSaleCount(uint256 _newSaleCount) external onlyDeployer {
+    SALE_LIMIT = _newSaleCount;
   }
 
   function startSale(uint256 _price, uint256 _saleDuration)
@@ -262,7 +326,7 @@ contract Beebits is IERC721 {
     override
     returns (address _owner)
   {
-    require(idToOwner[_tokenId] != address(0));
+    require(idToOwner[_tokenId] != address(0), "Beebits: token not minted");
     _owner = idToOwner[_tokenId];
   }
 
@@ -353,8 +417,8 @@ contract Beebits is IERC721 {
     reentrancyGuard
     returns (uint256)
   {
-    require(communityGrant);
-    require(!marketPaused);
+    require(communityGrant, "Beebits: community grant not started yet");
+    require(!marketPaused, "Beebits: market paused");
     require(
       _createVia > 0 && _createVia <= 10000,
       "Beebits: invalid bunk index."
@@ -377,11 +441,11 @@ contract Beebits is IERC721 {
    * Public sale minting.
    */
   function mint() external payable reentrancyGuard returns (uint256) {
-    require(publicSale, "Sale not started.");
-    require(!marketPaused);
-    require(numSales < SALE_LIMIT, "Sale limit reached.");
+    require(publicSale, "Beebits: sale not started.");
+    require(!marketPaused, "Beebits: market paused");
+    require(numSales < SALE_LIMIT, "Beebits: sale limit reached.");
     uint256 salePrice = getPrice();
-    require(msg.value >= salePrice, "Insufficient funds to purchase.");
+    require(msg.value >= salePrice, "Beebits: insufficient funds to purchase.");
     if (msg.value > salePrice) {
       msg.sender.transfer(msg.value.sub(salePrice));
     }
@@ -391,8 +455,8 @@ contract Beebits is IERC721 {
   }
 
   function _mint(address _to, uint256 createdVia) internal returns (uint256) {
-    require(_to != address(0), "Cannot mint to 0x0.");
-    require(numTokens < TOKEN_LIMIT, "Token limit reached.");
+    require(_to != address(0), "Beebits: cannot mint to 0x0.");
+    require(numTokens < TOKEN_LIMIT, "Beebits: token limit reached.");
     uint256 id = randomIndex();
 
     numTokens = numTokens + 1;
@@ -404,7 +468,10 @@ contract Beebits is IERC721 {
   }
 
   function _addNFToken(address _to, uint256 _tokenId) internal {
-    require(idToOwner[_tokenId] == address(0), "Cannot add, already owned.");
+    require(
+      idToOwner[_tokenId] == address(0),
+      "Beebits: cannot add, already owned."
+    );
     idToOwner[_tokenId] = _to;
 
     ownerToIds[_to].push(_tokenId);
@@ -412,7 +479,7 @@ contract Beebits is IERC721 {
   }
 
   function _removeNFToken(address _from, uint256 _tokenId) internal {
-    require(idToOwner[_tokenId] == _from, "Incorrect owner.");
+    require(idToOwner[_tokenId] == _from, "Beebits: incorrect owner.");
     delete idToOwner[_tokenId];
 
     uint256 tokenToRemoveIndex = idToOwnerIndex[_tokenId];
@@ -438,8 +505,8 @@ contract Beebits is IERC721 {
     bytes memory _data
   ) private canTransfer(_tokenId) validNFToken(_tokenId) {
     address tokenOwner = idToOwner[_tokenId];
-    require(tokenOwner == _from, "Incorrect owner.");
-    require(_to != address(0));
+    require(tokenOwner == _from, "Beebits: incorrect owner.");
+    require(_to != address(0), "Beebits: sender zero address");
 
     _transfer(_to, _tokenId);
 
@@ -552,6 +619,251 @@ contract Beebits is IERC721 {
     uint256 salt;
   }
 
+  struct Listing {
+    bool isForSale;
+    uint256 tokenId;
+    address seller;
+    uint256 minimumValue;
+    address sellTo;
+  }
+
+  struct Bid {
+    bool hasBid;
+    uint256 beebitTokenId;
+    address bidder;
+    uint256 bidValue;
+  }
+
+  function listBeebit(uint256 _askerTokenId, uint256 _askerMinPrice)
+    public
+    isTokenValid(_askerTokenId)
+    returns (bool)
+  {
+    require(
+      idToOwner[_askerTokenId] == msg.sender,
+      "Beebits: caller not beebit owner"
+    );
+    require(
+      !beebitsListings[_askerTokenId].isForSale,
+      "Beebits: token already in sale"
+    );
+
+    Listing memory listing =
+      Listing({
+        isForSale: true,
+        tokenId: _askerTokenId,
+        seller: msg.sender,
+        minimumValue: _askerMinPrice,
+        sellTo: address(0)
+      });
+
+    bytes32 listingHash = hashListing(listing, _askerTokenId);
+    beebitsListings[_askerTokenId] = listing;
+    cancelledListings[listingHash] = false;
+
+    emit BeebitListed(_askerTokenId, _askerMinPrice, address(0));
+    return true;
+  }
+
+  function deListBeebit(
+    uint256 _tokenId,
+    address _newSeller,
+    bytes32 _listingHash
+  ) public isTokenValid(_tokenId) returns (bool) {
+    require(
+      idToOwner[_tokenId] == msg.sender,
+      "Beebits: caller not beebit owner"
+    );
+    require(
+      beebitsListings[_tokenId].isForSale,
+      "Beebits: token not in sale already"
+    );
+
+    beebitsListings[_tokenId] = Listing(
+      false,
+      _tokenId,
+      _newSeller,
+      0,
+      address(0)
+    );
+    cancelledListings[_listingHash] = true;
+    emit BeebitDelisted(_tokenId);
+    return true;
+  }
+
+  function bidForListing(uint256 _tokenId)
+    public
+    payable
+    isTokenValid(_tokenId)
+  {
+    require(idToOwner[_tokenId] != address(0), "Beebits: bid to invalid token");
+    require(
+      idToOwner[_tokenId] != msg.sender,
+      "Beebits: cannot bid to own listing"
+    );
+    require(msg.value > 0, "Beebits: empty bid received");
+
+    Bid memory existingBid = beebitsBids[_tokenId];
+    require(
+      msg.value > existingBid.bidValue,
+      "Beebits: bid value not high enough"
+    );
+
+    if (existingBid.bidValue > 0) {
+      bnbBalance[existingBid.bidder] = bnbBalance[existingBid.bidder].add(
+        existingBid.bidValue
+      );
+    }
+
+    beebitsBids[_tokenId] = Bid(true, _tokenId, msg.sender, msg.value);
+    emit BeebitBidPlaced(_tokenId, msg.value, msg.sender);
+  }
+
+  function withdrawBeebitBid(uint256 _tokenId)
+    public
+    reentrancyGuard
+    isTokenValid(_tokenId)
+    returns (bool)
+  {
+    require(idToOwner[_tokenId] != address(0), "Beebits: bid to invalid token");
+    require(
+      idToOwner[_tokenId] != msg.sender,
+      "Beebits: bid withdraw cannot be done when owning a beebit"
+    );
+    Bid memory beebitBid = beebitsBids[_tokenId];
+    require(beebitBid.bidder == msg.sender, "Beebits: caller not bidder");
+    beebitsBids[_tokenId] = Bid(false, _tokenId, address(0), 0);
+    (bool success, ) = msg.sender.call{value: beebitBid.bidValue}("");
+    require(success, "Beebits: transaction failed");
+    emit BeebitBidWithdrawn(_tokenId, beebitBid.bidValue, msg.sender);
+    return true;
+  }
+
+  function acceptBeebitBid(uint256 _tokenId, uint256 minPrice)
+    public
+    reentrancyGuard
+    isTokenValid(_tokenId)
+    returns (bool)
+  {
+    require(idToOwner[_tokenId] == msg.sender, "Beebits: caller not owner");
+    Bid memory beebitsBid = beebitsBids[_tokenId];
+    require(beebitsBid.hasBid, "Beebits: invalid bid");
+    require(
+      beebitsBid.bidValue >= minPrice,
+      "Beebits: bid value not equal or greater than listed price"
+    );
+
+    Listing memory listing = beebitsListings[_tokenId];
+    require(listing.isForSale, "Beebits: token not listed");
+    require(
+      listing.seller == idToOwner[_tokenId],
+      "Beebits: seller no longer owner of beebit"
+    );
+
+    bytes32 listingHash = hashListing(listing, _tokenId);
+    require(
+      cancelledListings[listingHash] == false,
+      "Beebits: listing not found"
+    );
+
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].add(beebitsBid.bidValue);
+    deListBeebit(_tokenId, beebitsBid.bidder, listingHash);
+
+    _transfer(beebitsBid.bidder, _tokenId);
+
+    beebitsBids[_tokenId] = Bid(false, _tokenId, address(0), 0);
+    emit BeebitBought(
+      _tokenId,
+      beebitsBid.bidValue,
+      msg.sender,
+      beebitsBid.bidder
+    );
+
+    return true;
+  }
+
+  function buyBeebit(uint256 _tokenId)
+    public
+    payable
+    reentrancyGuard
+    isTokenValid(_tokenId)
+    returns (bool)
+  {
+    Listing memory listing = beebitsListings[_tokenId];
+    bytes32 listingHash = hashListing(listing, _tokenId);
+
+    require(
+      listing.seller != msg.sender,
+      "Beebits: cannot buy one's own beebit"
+    );
+    require(listing.isForSale, "Beebits: token not listed");
+    require(
+      cancelledListings[listingHash] == false,
+      "Beebits: listing not found"
+    );
+
+    if (msg.value > 0) {
+      bnbBalance[msg.sender] = bnbBalance[msg.sender].add(msg.value);
+      emit Deposit(msg.sender, msg.value);
+    }
+
+    require(
+      listing.sellTo == address(0) || listing.sellTo == msg.sender,
+      "Beebits: unauthorized"
+    );
+    require(
+      bnbBalance[msg.sender] >= listing.minimumValue,
+      "Beebits: insufficient funds to execute trade."
+    );
+    require(
+      listing.seller == idToOwner[_tokenId],
+      "Beebits: seller no longer owner of beebit"
+    );
+
+    // Transfer BNB
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].sub(listing.minimumValue);
+    bnbBalance[listing.seller] = bnbBalance[listing.seller].add(
+      listing.minimumValue
+    );
+
+    _transfer(msg.sender, _tokenId);
+
+    deListBeebit(_tokenId, msg.sender, listingHash);
+
+    emit BeebitBought(
+      _tokenId,
+      listing.minimumValue,
+      listing.seller,
+      msg.sender
+    );
+
+    Bid memory bid = beebitsBids[_tokenId];
+
+    if (bid.hasBid && bid.bidder == msg.sender) {
+      bnbBalance[msg.sender] = bnbBalance[msg.sender].add(bid.bidValue);
+      beebitsBids[_tokenId] = Bid(false, _tokenId, address(0), 0);
+    }
+
+    return true;
+  }
+
+  function hashListing(Listing memory _listing, uint256 _tokenId)
+    private
+    pure
+    returns (bytes32)
+  {
+    return
+      keccak256(
+        abi.encode(
+          _listing.isForSale,
+          _listing.seller,
+          _listing.minimumValue,
+          _listing.sellTo,
+          _tokenId
+        )
+      );
+  }
+
   function hashOffer(Offer memory offer) private pure returns (bytes32) {
     return
       keccak256(
@@ -652,7 +964,7 @@ contract Beebits is IERC721 {
     // At least one side should offer tokens
     require(
       makerIds.length > 0 || takerIds.length > 0,
-      "One side must offer tokens."
+      "Beebits: one side must offer tokens."
     );
     // Make sure the maker has funded the trade
     require(
@@ -775,15 +1087,15 @@ contract Beebits is IERC721 {
   }
 
   function withdraw(uint256 amount) external reentrancyGuard {
-    require(amount <= ethBalance[msg.sender], "Beebits: insufficient funds");
-    ethBalance[msg.sender] = ethBalance[msg.sender].sub(amount);
+    require(amount <= bnbBalance[msg.sender], "Beebits: insufficient funds");
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].sub(amount);
     (bool success, ) = msg.sender.call{value: amount}("");
     require(success, "Beebits: transaction failed");
     emit Withdraw(msg.sender, amount);
   }
 
   function deposit() external payable {
-    ethBalance[msg.sender] = ethBalance[msg.sender].add(msg.value);
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].add(msg.value);
     emit Deposit(msg.sender, msg.value);
   }
 }

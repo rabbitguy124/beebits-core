@@ -18,9 +18,6 @@ const config: HardhatUserConfig = {
         url: "https://bsc.getblock.io/?api_key=ddac6183-e999-4f7e-99f6-465a49bedd6c",
       },
     },
-    localhost: {
-      timeout: 120000,
-    },
   },
 };
 

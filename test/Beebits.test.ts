@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
@@ -94,6 +95,19 @@ describe("Beebits tests", async () => {
       const owner2Ins = beebitsInstance.connect(owner2);
       await cryptoBunksInstance.connect(owner2).transferPunk(owner3.address, 1);
       await expect(owner2Ins.mintWithBunk(2)).to.be.reverted;
+    });
+  });
+
+  describe("Listing tests", () => {
+    it("should be able to list a beebit", async () => {
+      const owner1Ins = beebitsInstance.connect(owner1);
+      await owner1Ins.mintWithBunk(1);
+      expect((await beebitsInstance.creatorNftMints(1)).toString()).eq("1");
+      const tokenId = await owner1Ins.tokenOfOwnerByIndex(owner1.address, 0);
+      console.log(tokenId.toString());
+      await expect(
+        owner1Ins.listBeebit(tokenId, BigNumber.from(3).div(10))
+      ).to.emit(beebitsInstance, "BeebitListed");
     });
   });
 });
