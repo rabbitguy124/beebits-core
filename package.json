@@ -17,10 +17,16 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@typechain/hardhat": "^2.0.0"
+    "@chainlink/contracts": "^0.1.7",
+    "@typechain/ethers-v5": "^7.0.0",
+    "@typechain/hardhat": "^2.0.0",
+    "ts-generator": "^0.1.1",
+    "typechain": "^5.0.0"
   },
   "scripts": {
     "split": "npx hardhat run scripts/splitPunks.ts --network localhost",
-    "test": "npx hardhat test --network localhost"
+    "swap:link": "npx hardhat run scripts/swapBNBLink.ts --network localhost",
+    "test": "npx hardhat test --network localhost",
+    "test:node": "npx hardhat node --fork https://data-seed-prebsc-1-s1.binance.org:8545/"
   }
 }

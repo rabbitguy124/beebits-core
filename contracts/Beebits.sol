@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.6;
+pragma solidity ^0.7.0;
 
 import "./interfaces/IERC721.sol";
 import "./libraries/SafeMath.sol";
 import "./interfaces/IBinanceBunksMarket.sol";
 import "./interfaces/IERC721TokenReceiver.sol";
+
+import "@chainlink/contracts/src/v0.7/dev/VRFConsumerBase.sol";
+import "./LinkSwapper.sol";
 
 contract Beebits is IERC721 {
   using SafeMath for uint256;
@@ -108,7 +111,7 @@ contract Beebits is IERC721 {
 
   mapping(address => mapping(address => bool)) internal ownerToOperators;
 
-  mapping(address => uint256[]) public ownerToIds;
+  mapping(address => uint256[]) internal ownerToIds;
 
   mapping(uint256 => uint256) internal idToOwnerIndex;
 
@@ -118,7 +121,7 @@ contract Beebits is IERC721 {
   uint256 internal numTokens = 0;
   uint256 internal numSales = 0;
 
-  // BinanceBunksMarket contract
+  // Cryptobunks contract
   address internal bunks;
 
   address payable internal deployer;
@@ -136,7 +139,6 @@ contract Beebits is IERC721 {
   //// Market
   bool public marketPaused;
   bool public contractSealed;
-  mapping(address => uint256) public ethBalance;
   mapping(bytes32 => bool) public cancelledOffers;
 
   //// Listing and Bids
@@ -196,23 +198,14 @@ contract Beebits is IERC721 {
     _;
   }
 
-  //   constructor(address _bunks, address payable _beneficiary) {
-  //     supportedInterfaces[0x01ffc9a7] = true; // ERC165
-  //     supportedInterfaces[0x80ac58cd] = true; // ERC721
-  //     supportedInterfaces[0x780e9d63] = true; // ERC721 Enumerable
-  //     supportedInterfaces[0x5b5e139f] = true; // ERC721 Metadata
-  //     deployer = msg.sender;
-  //     bunks = _bunks;
-  //     beneficiary = _beneficiary;
-  //   }
-  constructor() {
+  constructor(address _bunks, address payable _beneficiary) {
     supportedInterfaces[0x01ffc9a7] = true; // ERC165
     supportedInterfaces[0x80ac58cd] = true; // ERC721
     supportedInterfaces[0x780e9d63] = true; // ERC721 Enumerable
     supportedInterfaces[0x5b5e139f] = true; // ERC721 Metadata
     deployer = msg.sender;
-    bunks = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
-    beneficiary = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    bunks = _bunks;
+    beneficiary = _beneficiary;
   }
 
   function changeSaleCount(uint256 _newSaleCount) external onlyDeployer {
@@ -389,7 +382,7 @@ contract Beebits is IERC721 {
 
   // Calculate the mint price
   function getPrice() public view returns (uint256) {
-    require(publicSale, "Sale not started.");
+    require(publicSale, "Beebits: Sale not started.");
     uint256 elapsed = block.timestamp.sub(saleStartTime);
     if (elapsed >= saleDuration) {
       return 0;
@@ -427,11 +420,11 @@ contract Beebits is IERC721 {
       creatorNftMints[_createVia] == 0,
       "Beebits: already minted with this bunk"
     );
-    uint256 punkId = _createVia.sub(1);
-    // Make sure the sender owns the punk
+    uint256 bunkId = _createVia.sub(1);
+    // Make sure the sender owns the bunk
     require(
-      IBinanceBunksMarket(bunks).punkIndexToAddress(punkId) == msg.sender,
-      "Not the owner of this punk."
+      IBinanceBunksMarket(bunks).punkIndexToAddress(bunkId) == msg.sender,
+      "Beebits: not the owner of this bunk."
     );
     creatorNftMints[_createVia]++;
     return _mint(msg.sender, _createVia);
@@ -968,7 +961,7 @@ contract Beebits is IERC721 {
     );
     // Make sure the maker has funded the trade
     require(
-      ethBalance[offer.maker] >= offer.makerWei,
+      bnbBalance[offer.maker] >= offer.makerWei,
       "Beebits: maker does not have sufficient balance."
     );
     // Ensure the maker owns the maker tokens
@@ -1034,7 +1027,7 @@ contract Beebits is IERC721 {
     Offer memory offer =
       Offer(maker, taker, makerWei, makerIds, takerWei, takerIds, expiry, salt);
     if (msg.value > 0) {
-      ethBalance[msg.sender] = ethBalance[msg.sender].add(msg.value);
+      bnbBalance[msg.sender] = bnbBalance[msg.sender].add(msg.value);
       emit Deposit(msg.sender, msg.value);
     }
     require(
@@ -1056,14 +1049,14 @@ contract Beebits is IERC721 {
       "Beebits: trade not valid."
     );
     require(
-      ethBalance[msg.sender] >= offer.takerWei,
+      bnbBalance[msg.sender] >= offer.takerWei,
       "Beebits: insufficient funds to execute trade."
     );
     // Transfer ETH
-    ethBalance[offer.maker] = ethBalance[offer.maker].sub(offer.makerWei);
-    ethBalance[msg.sender] = ethBalance[msg.sender].add(offer.makerWei);
-    ethBalance[msg.sender] = ethBalance[msg.sender].sub(offer.takerWei);
-    ethBalance[offer.maker] = ethBalance[offer.maker].add(offer.takerWei);
+    bnbBalance[offer.maker] = bnbBalance[offer.maker].sub(offer.makerWei);
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].add(offer.makerWei);
+    bnbBalance[msg.sender] = bnbBalance[msg.sender].sub(offer.takerWei);
+    bnbBalance[offer.maker] = bnbBalance[offer.maker].add(offer.takerWei);
     // Transfer maker ids to taker (msg.sender)
     for (uint256 i = 0; i < makerIds.length; i++) {
       _transfer(msg.sender, makerIds[i]);

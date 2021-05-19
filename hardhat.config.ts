@@ -1,6 +1,6 @@
-import "@nomiclabs/hardhat-ethers";
 import { HardhatUserConfig } from "hardhat/config";
-// import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
+import "@typechain/hardhat";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -15,7 +15,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://bsc.getblock.io/?api_key=ddac6183-e999-4f7e-99f6-465a49bedd6c",
+        url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       },
     },
   },
