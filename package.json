@@ -20,10 +20,12 @@
     "@chainlink/contracts": "^0.1.7",
     "@typechain/ethers-v5": "^7.0.0",
     "@typechain/hardhat": "^2.0.0",
+    "hardhat-contract-sizer": "^2.0.3",
     "ts-generator": "^0.1.1",
     "typechain": "^5.0.0"
   },
   "scripts": {
+    "beebit": "npx hardhat run scripts/deployBeebits.ts --network localhost",
     "split": "npx hardhat run scripts/splitPunks.ts --network localhost",
     "swap:link": "npx hardhat run scripts/swapBNBLink.ts --network localhost",
     "test": "npx hardhat test --network localhost",

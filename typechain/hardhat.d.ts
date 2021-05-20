@@ -49,6 +49,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWLINK__factory>;
     getContractFactory(
+      name: "ILinkSwapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILinkSwapper__factory>;
+    getContractFactory(
       name: "IPegSwap",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPegSwap__factory>;

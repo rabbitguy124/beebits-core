@@ -12,6 +12,36 @@ export async function impersonateAddress(address, shouldStop = false) {
       });
 }
 
+export const WLINK = "0x404460c6a5ede2d891e8297795264fde62adbb75";
+
+export const FACTORY = {
+  test: "0x6725F303b657a9451d8BA641348b6761A6CC7a17",
+  main: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
+};
+
+export const VRF = {
+  test: "0xa555fC018435bef5A13C6c6870a9d4C11DEC329C",
+  main: "0x747973a5A2a4Ae1D3a8fDF5479f1514F65Db9C31",
+};
+
+export const NODE_HASH = {
+  test: "0xcaf3c3727e033261d383b315559476f48034c13b18f8cafed4d871abe5049186",
+  main: "0xc251acd21ec4fb7f31bb8868288bfdbaeb4fbfec2df3735ddbd4f7dc8d60103c",
+};
+
+export const LINK = {
+  test: "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06",
+  main: "0xF8A0BF9cF54Bb92F17374d9e9A321E6a111a51bD",
+};
+
+export const ROUTERS = {
+  test: "0xD99D1c33F9fC3444f8101754aBC46c52416550D1",
+  main: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+};
+
+export const CRYPTOBUNKS_ADDRESS_TEST =
+  "0xf226dA899bA9aaA694E70C539C0B2FeC85474020";
+
 export const CRYPTOPUNKS_ABI = [
   {
     constant: true,

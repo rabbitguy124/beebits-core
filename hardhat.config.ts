@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-ethers";
 import "@typechain/hardhat";
+import "hardhat-contract-sizer";
 
 const config: HardhatUserConfig = {
   solidity: {

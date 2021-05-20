@@ -108,7 +108,7 @@ contract LinkSwapper {
 
     LINK.approve(address(pegSwap), _linkAmount);
     pegSwap.swap(_linkAmount, address(LINK), address(WLINK));
-    WLINK.transfer(deployer, WLINK.balanceOf(address(this)));
+    WLINK.transfer(beebitsAddress, _linkAmount);
     return true;
   }
 
@@ -140,5 +140,17 @@ contract LinkSwapper {
         )
       )
     );
+  }
+
+  function withdrawWLINK() external {
+    require(msg.sender == deployer, "LinkSwapper: unauthorized");
+    require(WLINK.balanceOf(address(this)) >= 0 ether, "empty contract");
+    WLINK.transfer(msg.sender, WLINK.balanceOf(address(this)));
+  }
+
+  function withdrawLINK() external {
+    require(msg.sender == deployer, "LinkSwapper: unauthorized");
+    require(LINK.balanceOf(address(this)) >= 0 ether, "empty contract");
+    LINK.transfer(msg.sender, WLINK.balanceOf(address(this)));
   }
 }

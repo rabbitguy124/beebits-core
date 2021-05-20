@@ -23,14 +23,6 @@ async function main() {
     const addressSigner = await ethers.getSigner(address);
     await cryptoPunks.connect(addressSigner).transferPunk(receiver, punkIndex);
     console.log("Transfer of Bunk ID", punkIndex, "complete");
-    // const addressSignerBalance = await addressSigner.getBalance();
-    // console.log(`SENDING ${addressSignerBalance} BNB to ${receiver}`);
-    // addressSigner.sendTransaction({
-    //   from: addressSigner.address,
-    //   to: receiver,
-    //   gasPrice: 0,
-    //   value: addressSignerBalance,
-    // });
     await impersonateAddress(address, true);
   }
 }

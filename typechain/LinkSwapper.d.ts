@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   PayableOverrides,
   CallOverrides,
 } from "ethers";
@@ -25,8 +26,11 @@ interface LinkSwapperInterface extends ethers.utils.Interface {
     "getLinkAmountOut(uint256)": FunctionFragment;
     "getPairAddress(address)": FunctionFragment;
     "getWBNBAmountIn(uint256)": FunctionFragment;
+    "setBeebitContract(address)": FunctionFragment;
     "swap(uint256,uint256)": FunctionFragment;
     "swapPath(uint256)": FunctionFragment;
+    "withdrawLINK()": FunctionFragment;
+    "withdrawWLINK()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
@@ -43,12 +47,24 @@ interface LinkSwapperInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBeebitContract",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "swap",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapPath",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawLINK",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawWLINK",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
@@ -64,8 +80,20 @@ interface LinkSwapperInterface extends ethers.utils.Interface {
     functionFragment: "getWBNBAmountIn",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBeebitContract",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "swapPath", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawLINK",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawWLINK",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -119,7 +147,7 @@ export class LinkSwapper extends BaseContract {
     getLinkAmountOut(
       _inputWBNB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<[BigNumber]>;
 
     getPairAddress(
       factory: string,
@@ -129,7 +157,12 @@ export class LinkSwapper extends BaseContract {
     getWBNBAmountIn(
       _linkAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<[BigNumber]>;
+
+    setBeebitContract(
+      _newBeebit: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     swap(
       _deadline: BigNumberish,
@@ -138,6 +171,14 @@ export class LinkSwapper extends BaseContract {
     ): Promise<ContractTransaction>;
 
     swapPath(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    withdrawLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawWLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   deployer(overrides?: CallOverrides): Promise<string>;
@@ -145,14 +186,19 @@ export class LinkSwapper extends BaseContract {
   getLinkAmountOut(
     _inputWBNB: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
+  ): Promise<BigNumber>;
 
   getPairAddress(factory: string, overrides?: CallOverrides): Promise<string>;
 
   getWBNBAmountIn(
     _linkAmount: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
+  ): Promise<BigNumber>;
+
+  setBeebitContract(
+    _newBeebit: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   swap(
     _deadline: BigNumberish,
@@ -162,20 +208,33 @@ export class LinkSwapper extends BaseContract {
 
   swapPath(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  withdrawLINK(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawWLINK(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     deployer(overrides?: CallOverrides): Promise<string>;
 
     getLinkAmountOut(
       _inputWBNB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<BigNumber>;
 
     getPairAddress(factory: string, overrides?: CallOverrides): Promise<string>;
 
     getWBNBAmountIn(
       _linkAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<BigNumber>;
+
+    setBeebitContract(
+      _newBeebit: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     swap(
       _deadline: BigNumberish,
@@ -184,6 +243,10 @@ export class LinkSwapper extends BaseContract {
     ): Promise<boolean>;
 
     swapPath(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    withdrawLINK(overrides?: CallOverrides): Promise<void>;
+
+    withdrawWLINK(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -206,6 +269,11 @@ export class LinkSwapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    setBeebitContract(
+      _newBeebit: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     swap(
       _deadline: BigNumberish,
       _linkAmount: BigNumberish,
@@ -213,6 +281,14 @@ export class LinkSwapper extends BaseContract {
     ): Promise<BigNumber>;
 
     swapPath(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    withdrawLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    withdrawWLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -233,6 +309,11 @@ export class LinkSwapper extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    setBeebitContract(
+      _newBeebit: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     swap(
       _deadline: BigNumberish,
       _linkAmount: BigNumberish,
@@ -242,6 +323,14 @@ export class LinkSwapper extends BaseContract {
     swapPath(
       arg0: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdrawLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawWLINK(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
