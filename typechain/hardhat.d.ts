@@ -25,6 +25,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Beebits__factory>;
     getContractFactory(
+      name: "BeebitsWhole",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BeebitsWhole__factory>;
+    getContractFactory(
+      name: "BinancePunksMarket",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BinancePunksMarket__factory>;
+    getContractFactory(
       name: "IBinanceBunksMarket",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBinanceBunksMarket__factory>;

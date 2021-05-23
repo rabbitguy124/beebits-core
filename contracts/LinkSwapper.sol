@@ -31,7 +31,9 @@ contract LinkSwapper {
     router = ISwapRouterV2(_router);
     LINK = ILINK(_link);
     isTesting = _isTesting;
-    swapPath[0] = router.WETH();
+    swapPath[0] = _isTesting
+      ? 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd
+      : 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
     swapPath[1] = address(_link);
   }
 

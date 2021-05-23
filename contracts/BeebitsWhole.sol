@@ -12,7 +12,7 @@ import "./utils/ReentrancyGuard.sol";
 import "@chainlink/contracts/src/v0.7/dev/VRFConsumerBase.sol";
 import "./LinkSwapper.sol";
 
-contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
+contract BeebitsWhole is ReentrancyGuard, IERC721, VRFConsumerBase {
   using SafeMath for uint256;
 
   /// Events

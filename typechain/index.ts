@@ -4,6 +4,8 @@
 export type { VRFConsumerBase } from "./VRFConsumerBase";
 export type { LinkTokenInterface } from "./LinkTokenInterface";
 export type { Beebits } from "./Beebits";
+export type { BeebitsWhole } from "./BeebitsWhole";
+export type { BinancePunksMarket } from "./BinancePunksMarket";
 export type { IBinanceBunksMarket } from "./IBinanceBunksMarket";
 export type { IERC165 } from "./IERC165";
 export type { IERC721 } from "./IERC721";
@@ -19,6 +21,8 @@ export type { LinkSwapper } from "./LinkSwapper";
 export { VRFConsumerBase__factory } from "./factories/VRFConsumerBase__factory";
 export { LinkTokenInterface__factory } from "./factories/LinkTokenInterface__factory";
 export { Beebits__factory } from "./factories/Beebits__factory";
+export { BeebitsWhole__factory } from "./factories/BeebitsWhole__factory";
+export { BinancePunksMarket__factory } from "./factories/BinancePunksMarket__factory";
 export { IBinanceBunksMarket__factory } from "./factories/IBinanceBunksMarket__factory";
 export { IERC165__factory } from "./factories/IERC165__factory";
 export { IERC721__factory } from "./factories/IERC721__factory";

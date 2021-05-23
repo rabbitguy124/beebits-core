@@ -1,4 +1,4 @@
-import { formatEther, formatUnits, parseEther } from "@ethersproject/units";
+import { parseEther } from "@ethersproject/units";
 import { run, ethers, network } from "hardhat";
 import {
   CRYPTOBUNKS_ADDRESS,
@@ -8,28 +8,24 @@ import {
   NODE_HASH,
   ROUTERS,
   VRF,
+  WLINK,
 } from "../utils";
-
-const LINK_FEES = parseEther("1").div(5);
-const WLINK = "0x404460c6a5ede2d891e8297795264fde62adbb75";
 
 async function main() {
   await run("compile");
   const [owner] = await ethers.getSigners();
 
-  const cryptoBunks = await ethers.getContractAt(
-    CRYPTOPUNKS_ABI,
-    CRYPTOBUNKS_ADDRESS
-  );
+  const isTesting = [97, 9998].includes(network.config.chainId);
+  const isNotLocal = [56, 97].includes(network.config.chainId);
 
-  if ((await cryptoBunks.punkIndexToAddress("0")) !== owner.address) {
-    const BUNK_HOLDER = "0x71D09D0e606D1519804C6EFBd835d07DC4594227";
-    console.log("Transferring Bunk to owner");
-    await impersonateAddress(BUNK_HOLDER);
-    const punkHolder = await ethers.getSigner(BUNK_HOLDER);
-    await cryptoBunks.connect(punkHolder).transferPunk(owner.address, "0");
-    await impersonateAddress(BUNK_HOLDER);
-  }
+  console.log("IS TESTNET", isTesting);
+
+  const ROUTER_ADDRESS = isTesting ? ROUTERS.test : ROUTERS.main;
+  const LINK_TOKEN = isTesting ? LINK.test : LINK.main;
+  const WLINK_TOKEN = isTesting ? LINK.test : WLINK;
+  const VRF_ADD = isTesting ? VRF.test : VRF.main;
+  const NODE_HASH_ADD = isTesting ? NODE_HASH.test : NODE_HASH.main;
+  const LINK_FEES = parseEther("1").div(isTesting ? 10 : 5);
 
   const Beebit = await ethers.getContractFactory("Beebits");
   const LinkSwapper = await ethers.getContractFactory("LinkSwapper");
@@ -38,53 +34,56 @@ async function main() {
     await Beebit.deploy(
       CRYPTOBUNKS_ADDRESS,
       owner.address,
-      WLINK,
-      VRF.main,
-      NODE_HASH.main,
-      LINK_FEES
+      WLINK_TOKEN,
+      VRF_ADD,
+      NODE_HASH_ADD,
+      LINK_FEES,
+      { gasLimit: 10000000 }
     )
   ).deployed();
 
-  const lSwapper = await (
-    await LinkSwapper.deploy(ROUTERS.main, LINK.main, beebit.address, false)
+  isNotLocal &&
+    (await run("verify:verify", {
+      address: beebit.address,
+      constructorArguments: [
+        CRYPTOBUNKS_ADDRESS,
+        owner.address,
+        WLINK_TOKEN,
+        VRF_ADD,
+        NODE_HASH_ADD,
+        LINK_FEES,
+      ],
+    }));
+
+  console.log("BEEBITS DEPLOYED AT", beebit.address);
+
+  const linkSwapper = await (
+    await LinkSwapper.deploy(
+      ROUTER_ADDRESS,
+      LINK_TOKEN,
+      beebit.address,
+      isTesting,
+      {
+        gasLimit: 10000000,
+      }
+    )
   ).deployed();
 
-  const expectedWBNBBalance = await lSwapper
-    .connect(beebit.address)
-    .getWBNBAmountIn(LINK_FEES);
+  console.log("LINKSWAPPER DEPLOYED AT", linkSwapper.address);
 
-  console.log(beebit.address, lSwapper.address);
+  isNotLocal &&
+    (await run("verify:verify", {
+      address: linkSwapper.address,
+      constructorArguments: [
+        ROUTER_ADDRESS,
+        LINK_TOKEN,
+        beebit.address,
+        isTesting,
+      ],
+    }));
 
-  await beebit.setLinkSwapper(lSwapper.address);
-
-  console.log(
-    "AMOUNT TO PAY FOR RANDOMNESS FEE",
-    formatEther(expectedWBNBBalance)
-  );
-
-  const gasEstimate = await beebit.estimateGas.mintWithBunk(
-    1,
-    Math.floor(new Date().getTime() / 1000 + 3600),
-    { value: expectedWBNBBalance }
-  );
-
-  console.log("GAS ESTIMATE", gasEstimate.toString());
-
-  const tx = await beebit.mintWithBunk(
-    1,
-    Math.floor(new Date().getTime() / 1000 + 3600),
-    { value: expectedWBNBBalance }
-  );
-
-  const receipt = await tx.wait();
-  const gasPrice = tx.gasPrice;
-  const gasUsed = receipt.gasUsed;
-  const cGasUsed = receipt.cumulativeGasUsed;
-
-  console.log("GAS USED", gasUsed.toString());
-  console.log("CUMULATIVE GAS USED", cGasUsed.toString());
-  console.log("GAS PRICE", formatUnits(gasPrice, "gwei"));
-  console.log(`TOTAL FEE: `, gasEstimate.toString());
+  await beebit.setLinkSwapper(linkSwapper.address);
+  console.log("DEPLOY COMPLETE");
 }
 
 main()

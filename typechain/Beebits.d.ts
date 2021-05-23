@@ -25,7 +25,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "SALE_LIMIT()": FunctionFragment;
     "TOKEN_LIMIT()": FunctionFragment;
     "acceptBeebitBid(uint256,uint256)": FunctionFragment;
-    "acceptTrade(address,address,uint256,uint256[],uint256,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "beebitsBids(uint256)": FunctionFragment;
@@ -33,9 +32,7 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "bidForListing(uint256)": FunctionFragment;
     "bnbBalance(address)": FunctionFragment;
     "buyBeebit(uint256)": FunctionFragment;
-    "cancelOffer(address,address,uint256,uint256[],uint256,uint256[],uint256,uint256)": FunctionFragment;
     "cancelledListings(bytes32)": FunctionFragment;
-    "cancelledOffers(bytes32)": FunctionFragment;
     "changeSaleCount(uint256)": FunctionFragment;
     "communityGrant()": FunctionFragment;
     "contentHash()": FunctionFragment;
@@ -46,9 +43,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "devMint(uint256,address,uint256)": FunctionFragment;
     "endCommunityGrant()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "hashToSign(address,address,uint256,uint256[],uint256,uint256[],uint256,uint256)": FunctionFragment;
-    "idToOwner(uint256)": FunctionFragment;
-    "idToOwnerIndex(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "listBeebit(uint256,uint256)": FunctionFragment;
     "marketPaused()": FunctionFragment;
@@ -57,12 +51,9 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "mintsRemaining()": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
-    "ownerToIds(address,uint256)": FunctionFragment;
     "pauseMarket(bool)": FunctionFragment;
     "publicSale()": FunctionFragment;
     "rawFulfillRandomness(bytes32,uint256)": FunctionFragment;
-    "requestToMinters(bytes32)": FunctionFragment;
-    "requesters(address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "saleDuration()": FunctionFragment;
     "saleStartTime()": FunctionFragment;
@@ -77,7 +68,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
-    "tradeValid(address,address,uint256,uint256[],uint256,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
     "withdrawBeebitBid(uint256)": FunctionFragment;
@@ -94,20 +84,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "acceptBeebitBid",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "acceptTrade",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish,
-      BytesLike
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "approve",
@@ -132,24 +108,7 @@ interface BeebitsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "cancelOffer",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "cancelledListings",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancelledOffers",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
@@ -190,27 +149,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "hashToSign",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "idToOwner",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "idToOwnerIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
@@ -237,10 +175,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "ownerToIds",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "pauseMarket",
     values: [boolean]
   ): string;
@@ -252,11 +186,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     functionFragment: "rawFulfillRandomness",
     values: [BytesLike, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "requestToMinters",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "requesters", values: [string]): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
@@ -311,20 +240,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "tradeValid",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
@@ -346,10 +261,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     functionFragment: "acceptBeebitBid",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptTrade",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -367,15 +278,7 @@ interface BeebitsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "bnbBalance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyBeebit", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "cancelOffer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "cancelledListings",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelledOffers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -412,12 +315,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     functionFragment: "getApproved",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "hashToSign", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "idToOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "idToOwnerIndex",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -438,7 +335,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerToIds", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pauseMarket",
     data: BytesLike
@@ -448,11 +344,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     functionFragment: "rawFulfillRandomness",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestToMinters",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "requesters", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
     data: BytesLike
@@ -500,7 +391,6 @@ interface BeebitsInterface extends ethers.utils.Interface {
     functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "tradeValid", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -604,19 +494,6 @@ export class Beebits extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    acceptTrade(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     approve(
       _approved: string,
       _tokenId: BigNumberish,
@@ -662,24 +539,7 @@ export class Beebits extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    cancelOffer(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     cancelledListings(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    cancelledOffers(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -727,25 +587,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    hashToSign(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    idToOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
-
-    idToOwnerIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -780,12 +621,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { _owner: string }>;
 
-    ownerToIds(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     pauseMarket(
       _paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -798,22 +633,6 @@ export class Beebits extends BaseContract {
       randomness: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    requestToMinters(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    requesters(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, boolean, BigNumber] & {
-        requestId: string;
-        isClaiming: boolean;
-        bunkIndex: BigNumber;
-      }
-    >;
 
     "safeTransferFrom(address,address,uint256)"(
       _from: string,
@@ -885,19 +704,6 @@ export class Beebits extends BaseContract {
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    tradeValid(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     transferFrom(
       _from: string,
       _to: string,
@@ -924,19 +730,6 @@ export class Beebits extends BaseContract {
     _tokenId: BigNumberish,
     minPrice: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  acceptTrade(
-    maker: string,
-    taker: string,
-    makerWei: BigNumberish,
-    makerIds: BigNumberish[],
-    takerWei: BigNumberish,
-    takerIds: BigNumberish[],
-    expiry: BigNumberish,
-    salt: BigNumberish,
-    signature: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   approve(
@@ -984,24 +777,10 @@ export class Beebits extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  cancelOffer(
-    maker: string,
-    taker: string,
-    makerWei: BigNumberish,
-    makerIds: BigNumberish[],
-    takerWei: BigNumberish,
-    takerIds: BigNumberish[],
-    expiry: BigNumberish,
-    salt: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   cancelledListings(
     arg0: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  cancelledOffers(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   changeSaleCount(
     _newSaleCount: BigNumberish,
@@ -1046,25 +825,6 @@ export class Beebits extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  hashToSign(
-    maker: string,
-    taker: string,
-    makerWei: BigNumberish,
-    makerIds: BigNumberish[],
-    takerWei: BigNumberish,
-    takerIds: BigNumberish[],
-    expiry: BigNumberish,
-    salt: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  idToOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  idToOwnerIndex(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   isApprovedForAll(
     _owner: string,
     _operator: string,
@@ -1096,12 +856,6 @@ export class Beebits extends BaseContract {
 
   ownerOf(_tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  ownerToIds(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   pauseMarket(
     _paused: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1114,19 +868,6 @@ export class Beebits extends BaseContract {
     randomness: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  requestToMinters(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  requesters(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, boolean, BigNumber] & {
-      requestId: string;
-      isClaiming: boolean;
-      bunkIndex: BigNumber;
-    }
-  >;
 
   "safeTransferFrom(address,address,uint256)"(
     _from: string,
@@ -1195,19 +936,6 @@ export class Beebits extends BaseContract {
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  tradeValid(
-    maker: string,
-    taker: string,
-    makerWei: BigNumberish,
-    makerIds: BigNumberish[],
-    takerWei: BigNumberish,
-    takerIds: BigNumberish[],
-    expiry: BigNumberish,
-    salt: BigNumberish,
-    signature: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   transferFrom(
     _from: string,
     _to: string,
@@ -1235,19 +963,6 @@ export class Beebits extends BaseContract {
       minPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    acceptTrade(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     approve(
       _approved: string,
@@ -1294,24 +1009,7 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    cancelOffer(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     cancelledListings(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    cancelledOffers(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1355,25 +1053,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    hashToSign(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    idToOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    idToOwnerIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -1402,12 +1081,6 @@ export class Beebits extends BaseContract {
 
     ownerOf(_tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    ownerToIds(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     pauseMarket(_paused: boolean, overrides?: CallOverrides): Promise<void>;
 
     publicSale(overrides?: CallOverrides): Promise<boolean>;
@@ -1417,22 +1090,6 @@ export class Beebits extends BaseContract {
       randomness: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    requestToMinters(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    requesters(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, boolean, BigNumber] & {
-        requestId: string;
-        isClaiming: boolean;
-        bunkIndex: BigNumber;
-      }
-    >;
 
     "safeTransferFrom(address,address,uint256)"(
       _from: string,
@@ -1498,19 +1155,6 @@ export class Beebits extends BaseContract {
     ): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradeValid(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     transferFrom(
       _from: string,
@@ -1670,19 +1314,6 @@ export class Beebits extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    acceptTrade(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     approve(
       _approved: string,
       _tokenId: BigNumberish,
@@ -1713,24 +1344,7 @@ export class Beebits extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    cancelOffer(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     cancelledListings(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    cancelledOffers(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1778,28 +1392,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hashToSign(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    idToOwner(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    idToOwnerIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -1834,12 +1426,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerToIds(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     pauseMarket(
       _paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1852,13 +1438,6 @@ export class Beebits extends BaseContract {
       randomness: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    requestToMinters(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    requesters(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256)"(
       _from: string,
@@ -1930,19 +1509,6 @@ export class Beebits extends BaseContract {
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tradeValid(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     transferFrom(
       _from: string,
       _to: string,
@@ -1970,19 +1536,6 @@ export class Beebits extends BaseContract {
       _tokenId: BigNumberish,
       minPrice: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    acceptTrade(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     approve(
@@ -2021,24 +1574,7 @@ export class Beebits extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    cancelOffer(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     cancelledListings(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    cancelledOffers(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2086,28 +1622,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    hashToSign(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    idToOwner(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    idToOwnerIndex(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -2142,12 +1656,6 @@ export class Beebits extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ownerToIds(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     pauseMarket(
       _paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2159,16 +1667,6 @@ export class Beebits extends BaseContract {
       requestId: BytesLike,
       randomness: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestToMinters(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    requesters(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(
@@ -2240,19 +1738,6 @@ export class Beebits extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tradeValid(
-      maker: string,
-      taker: string,
-      makerWei: BigNumberish,
-      makerIds: BigNumberish[],
-      takerWei: BigNumberish,
-      takerIds: BigNumberish[],
-      expiry: BigNumberish,
-      salt: BigNumberish,
-      signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     transferFrom(
       _from: string,
