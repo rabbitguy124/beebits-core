@@ -96,6 +96,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
   bytes32 internal vrfHash;
   address payable internal deployer;
   address payable internal beneficiary;
+  address payable listingCoordinator;
   ILinkSwapper internal linkSwapper;
   bool public communityGrant = true;
   bool public publicSale = false;
@@ -155,6 +156,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
   constructor(
     address _bunks,
     address payable _beneficiary,
+    address payable _listingCoordinator,
     address _linkTokenAddress,
     address _vrfCoordinator,
     bytes32 _keyHash,
@@ -167,6 +169,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     deployer = msg.sender;
     bunks = _bunks;
     beneficiary = _beneficiary;
+    listingCoordinator = _listingCoordinator;
     vrfHash = _keyHash;
     LINK_FEE = _randomnessFee;
   }
@@ -619,17 +622,25 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     returns (bool)
   {
     require(idToOwner[_askerTokenId] == msg.sender, "caller not beebit owner");
+    require(_askerMinPrice > 100, "price should be atleast 100 wei");
     require(
       beebitsListings[_askerTokenId].isForSale == false,
       "token already in sale"
     );
+
+    uint256 listingFee = _askerMinPrice.div(100);
+    bnbBalance[listingCoordinator] = bnbBalance[listingCoordinator].add(
+      listingFee
+    );
+
+    uint256 finalListingPrice = _askerMinPrice.sub(listingFee);
 
     Listing memory listing =
       Listing({
         isForSale: true,
         tokenId: _askerTokenId,
         seller: msg.sender,
-        minimumValue: _askerMinPrice,
+        minimumValue: finalListingPrice,
         sellTo: address(0)
       });
 
@@ -637,7 +648,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     beebitsListings[_askerTokenId] = listing;
     cancelledListings[listingHash] = false;
 
-    emit BeebitListed(_askerTokenId, _askerMinPrice, msg.sender, address(0));
+    emit BeebitListed(_askerTokenId, finalListingPrice, msg.sender, address(0));
     return true;
   }
 

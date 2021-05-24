@@ -11,7 +11,9 @@ import {
 
 async function main() {
   await run("compile");
-  const [owner] = await ethers.getSigners();
+  const [owner, feeCoordinator] = await ethers.getSigners();
+
+  console.log(feeCoordinator.address);
 
   const isTesting = [97, 9998].includes(network.config.chainId);
   const isNotLocal = [56, 97].includes(network.config.chainId);
@@ -32,6 +34,7 @@ async function main() {
     await Beebit.deploy(
       CRYPTOBUNKS_ADDRESS,
       owner.address,
+      feeCoordinator.address,
       WLINK_TOKEN,
       VRF_ADD,
       NODE_HASH_ADD,
@@ -46,6 +49,7 @@ async function main() {
       constructorArguments: [
         CRYPTOBUNKS_ADDRESS,
         owner.address,
+        feeCoordinator.address,
         WLINK_TOKEN,
         VRF_ADD,
         NODE_HASH_ADD,
