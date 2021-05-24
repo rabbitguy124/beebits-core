@@ -36,6 +36,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
   event BeebitListed(
     uint256 tokenId,
     uint256 askingPrice,
+    address seller,
     address buyerAddress
   );
   event BeebitDelisted(uint256 tokenId);
@@ -43,7 +44,8 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     uint256 tokenId,
     uint256 price,
     address seller,
-    address buyer
+    address buyer,
+    bool isBoughtFromBid
   );
 
   event BeebitBidPlaced(uint256 tokenId, uint256 bidValue, address bidder);
@@ -635,7 +637,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     beebitsListings[_askerTokenId] = listing;
     cancelledListings[listingHash] = false;
 
-    emit BeebitListed(_askerTokenId, _askerMinPrice, address(0));
+    emit BeebitListed(_askerTokenId, _askerMinPrice, msg.sender, address(0));
     return true;
   }
 
@@ -723,7 +725,6 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     );
 
     Listing memory listing = beebitsListings[_tokenId];
-    require(listing.isForSale, "token not listed");
     require(
       listing.seller == idToOwner[_tokenId],
       "seller no longer owner of beebit"
@@ -739,13 +740,15 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
 
     _transfer(beebitsBids[_tokenId].bidder, _tokenId);
 
-    beebitsBids[_tokenId] = Bid(false, _tokenId, address(0), 0);
     emit BeebitBought(
       _tokenId,
       beebitsBids[_tokenId].bidValue,
       msg.sender,
-      beebitsBids[_tokenId].bidder
+      beebitsBids[_tokenId].bidder,
+      true
     );
+
+    beebitsBids[_tokenId] = Bid(false, _tokenId, address(0), 0);
 
     return true;
   }
@@ -796,7 +799,8 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
       _tokenId,
       listing.minimumValue,
       listing.seller,
-      msg.sender
+      msg.sender,
+      false
     );
 
     if (

@@ -406,9 +406,9 @@ interface BeebitsInterface extends ethers.utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeebitBidPlaced(uint256,uint256,address)": EventFragment;
     "BeebitBidWithdrawn(uint256,uint256,address)": EventFragment;
-    "BeebitBought(uint256,uint256,address,address)": EventFragment;
+    "BeebitBought(uint256,uint256,address,address,bool)": EventFragment;
     "BeebitDelisted(uint256)": EventFragment;
-    "BeebitListed(uint256,uint256,address)": EventFragment;
+    "BeebitListed(uint256,uint256,address,address)": EventFragment;
     "CommunityGrantEnds()": EventFragment;
     "Deposit(address,uint256)": EventFragment;
     "DevMintToggled(bool)": EventFragment;
@@ -1212,10 +1212,17 @@ export class Beebits extends BaseContract {
       tokenId?: null,
       price?: null,
       seller?: null,
-      buyer?: null
+      buyer?: null,
+      isBoughtFromBid?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, string, string],
-      { tokenId: BigNumber; price: BigNumber; seller: string; buyer: string }
+      [BigNumber, BigNumber, string, string, boolean],
+      {
+        tokenId: BigNumber;
+        price: BigNumber;
+        seller: string;
+        buyer: string;
+        isBoughtFromBid: boolean;
+      }
     >;
 
     BeebitDelisted(
@@ -1225,10 +1232,16 @@ export class Beebits extends BaseContract {
     BeebitListed(
       tokenId?: null,
       askingPrice?: null,
+      seller?: null,
       buyerAddress?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, string],
-      { tokenId: BigNumber; askingPrice: BigNumber; buyerAddress: string }
+      [BigNumber, BigNumber, string, string],
+      {
+        tokenId: BigNumber;
+        askingPrice: BigNumber;
+        seller: string;
+        buyerAddress: string;
+      }
     >;
 
     CommunityGrantEnds(): TypedEventFilter<[], {}>;

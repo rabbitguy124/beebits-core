@@ -2,8 +2,6 @@ import { parseEther } from "@ethersproject/units";
 import { run, ethers, network } from "hardhat";
 import {
   CRYPTOBUNKS_ADDRESS,
-  CRYPTOPUNKS_ABI,
-  impersonateAddress,
   LINK,
   NODE_HASH,
   ROUTERS,
