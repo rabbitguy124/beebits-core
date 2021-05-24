@@ -618,29 +618,36 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
 
   function listBeebit(uint256 _askerTokenId, uint256 _askerMinPrice)
     public
+    payable
     isTokenValid(_askerTokenId)
     returns (bool)
   {
     require(idToOwner[_askerTokenId] == msg.sender, "caller not beebit owner");
-    require(_askerMinPrice > 100, "price should be atleast 100 wei");
     require(
       beebitsListings[_askerTokenId].isForSale == false,
       "token already in sale"
     );
 
+    require(_askerMinPrice >= 100, "listing price should be minimum 100 wei");
+
     uint256 listingFee = _askerMinPrice.div(100);
+    require(msg.value >= listingFee, "insufficient listing fee");
+
+    if (msg.value > listingFee) {
+      (bool success, ) = msg.sender.call{value: msg.value.sub(listingFee)}("");
+      require(success, "listing refund failure");
+    }
+
     bnbBalance[listingCoordinator] = bnbBalance[listingCoordinator].add(
       listingFee
     );
-
-    uint256 finalListingPrice = _askerMinPrice.sub(listingFee);
 
     Listing memory listing =
       Listing({
         isForSale: true,
         tokenId: _askerTokenId,
         seller: msg.sender,
-        minimumValue: finalListingPrice,
+        minimumValue: _askerMinPrice,
         sellTo: address(0)
       });
 
@@ -648,7 +655,7 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
     beebitsListings[_askerTokenId] = listing;
     cancelledListings[listingHash] = false;
 
-    emit BeebitListed(_askerTokenId, finalListingPrice, msg.sender, address(0));
+    emit BeebitListed(_askerTokenId, _askerMinPrice, msg.sender, address(0));
     return true;
   }
 
@@ -844,7 +851,10 @@ contract Beebits is ReentrancyGuard, IERC721, VRFConsumerBase {
   }
 
   function withdraw(uint256 amount) external nonReentrant {
-    require(amount <= bnbBalance[msg.sender], "insufficient funds");
+    require(
+      amount <= bnbBalance[msg.sender] && address(this).balance >= amount,
+      "insufficient funds"
+    );
     bnbBalance[msg.sender] = bnbBalance[msg.sender].sub(amount);
     (bool success, ) = msg.sender.call{value: amount}("");
     require(success, "transaction failed");

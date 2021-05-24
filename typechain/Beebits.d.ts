@@ -596,7 +596,7 @@ export class Beebits extends BaseContract {
     listBeebit(
       _askerTokenId: BigNumberish,
       _askerMinPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     marketPaused(overrides?: CallOverrides): Promise<[boolean]>;
@@ -834,7 +834,7 @@ export class Beebits extends BaseContract {
   listBeebit(
     _askerTokenId: BigNumberish,
     _askerMinPrice: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   marketPaused(overrides?: CallOverrides): Promise<boolean>;
@@ -1414,7 +1414,7 @@ export class Beebits extends BaseContract {
     listBeebit(
       _askerTokenId: BigNumberish,
       _askerMinPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     marketPaused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1644,7 +1644,7 @@ export class Beebits extends BaseContract {
     listBeebit(
       _askerTokenId: BigNumberish,
       _askerMinPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     marketPaused(overrides?: CallOverrides): Promise<PopulatedTransaction>;

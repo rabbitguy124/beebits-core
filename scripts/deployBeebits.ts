@@ -13,8 +13,6 @@ async function main() {
   await run("compile");
   const [owner, feeCoordinator] = await ethers.getSigners();
 
-  console.log(feeCoordinator.address);
-
   const isTesting = [97, 9998].includes(network.config.chainId);
   const isNotLocal = [56, 97].includes(network.config.chainId);
 
